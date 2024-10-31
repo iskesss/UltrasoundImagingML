@@ -2,7 +2,7 @@ import cv2
 import os
 
 
-def fit_bounding_boxes() -> dict:
+def fit_bounding_boxes(display_animation: bool = False) -> dict:
     """
     Detects bounding boxes around ellipses in annotated images within a specified directory and
     returns their coordinates in a format compatible with YOLO object detection models.
@@ -76,10 +76,11 @@ def fit_bounding_boxes() -> dict:
                 # Optional: Draw bounding box on image for visualization
                 cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
-            # Display the image with the drawn rectangle
-            # cv2.imshow("Image with Bounding Box", image)
-            # Wait for a key press to close the window, else closes after one millisecond
-            # cv2.waitKey(1)
+            if display_animation:
+                # Display the image with the drawn rectangle
+                cv2.imshow("Image with Bounding Box", image)
+                # Wait for a key press to close the window, else closes after one millisecond
+                cv2.waitKey(1)
 
     # Close all OpenCV windows
     cv2.destroyAllWindows()
@@ -87,4 +88,4 @@ def fit_bounding_boxes() -> dict:
     return boundingboxes
 
 
-print(fit_bounding_boxes())
+print(fit_bounding_boxes(display_animation=False))
