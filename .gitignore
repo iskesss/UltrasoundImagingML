@@ -1,3 +1,11 @@
 .DS_Store
 venv/
 data/
+Fetal-HC-1/
+Lib/
+runs/
+Scripts/
+Include/
+.venv/
+pyvenv.cfg
+yolo11n.pt
