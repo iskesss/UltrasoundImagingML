@@ -65,15 +65,21 @@ def fit_bounding_boxes() -> dict:
                 height = h / img_height
 
                 # Append annotation as a single bounding box for an ellipse
-                boundingboxes[filename[:6] + ".png"] = (x_center, y_center, width, height)
+                boundingboxes[
+                    (
+                        (filename[:7] + ".png")
+                        if filename[4] != "H"
+                        else (filename[:6] + ".png")
+                    )
+                ] = (x_center, y_center, width, height)
 
                 # Optional: Draw bounding box on image for visualization
                 cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
             # Display the image with the drawn rectangle
-            #cv2.imshow("Image with Bounding Box", image)
+            # cv2.imshow("Image with Bounding Box", image)
             # Wait for a key press to close the window, else closes after one millisecond
-            #cv2.waitKey(1)
+            # cv2.waitKey(1)
 
     # Close all OpenCV windows
     cv2.destroyAllWindows()
