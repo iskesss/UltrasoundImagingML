@@ -35,6 +35,7 @@ def fit_bounding_boxes(display_animation: bool = False) -> dict:
     """
     boundingboxes = dict()
 
+
     for filename in os.listdir("data/training_set"):
         if filename.endswith("HC_Annotation.png"):
 
@@ -89,3 +90,4 @@ def fit_bounding_boxes(display_animation: bool = False) -> dict:
 
 
 print(fit_bounding_boxes(display_animation=False))
+print(len(os.listdir("data/training_set")) + len(os.listdir("data/test_set")))
