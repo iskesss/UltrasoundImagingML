@@ -37,9 +37,6 @@ def train():
 def test():
     # Load a model
     model = YOLO("./runs/detect/train27/weights/best.pt")  # pretrained YOLO11n model
-
-    # Run batched inference on a list of images
-    results = model([os.path.join("training-set-2/test/images", filename) for filename in os.listdir("training-set-2/test/images")])
         
     # Directory paths
     test_images_dir = "training-set-2/test/images"
@@ -56,7 +53,7 @@ def test():
     os.makedirs(result_images_dir)
         
     # Add all test images into array in image_filenames
-    image_filenames = [filename for filename in os.listdir(test_images_dir) if filename.endswith(('.png', '.jpg', '.jpeg'))]
+    image_filenames = [filename for filename in os.listdir(test_images_dir)]
     
     # Run test images through model to get predictions based on pretrained model weights
     results = model([os.path.join(test_images_dir, filename) for filename in image_filenames])
