@@ -2,6 +2,7 @@ from roboflow import Roboflow
 from ultralytics import YOLO
 import torch
 import os
+from PIL import Image
 
 def run():
     torch.multiprocessing.freeze_support()
@@ -50,22 +51,71 @@ def test():
     model = YOLO("./runs/detect/train27/weights/best.pt")  # pretrained YOLO11n model
 
     # Run batched inference on a list of images
-    #for filename in os.listdir("training-set-2"):
-    #    print(filename)
-    #results = model([filename for filename in os.listdir("training-set-2/test/images")])  # return a list of Results objects
+    results = model([os.path.join("training-set-2/test/images", filename) for filename in os.listdir("training-set-2/test/images")])
+   
+    ## Process results list
+    #for result in results:
+    #    boxes = result.boxes  # Boxes object for bounding box outputs
+    #    masks = result.masks  # Masks object for segmentation masks outputs
+    #    keypoints = result.keypoints  # Keypoints object for pose outputs
+    #    probs = result.probs  # Probs object for classification outputs
+    #    obb = result.obb  # Oriented boxes object for OBB outputs
+    #    #result.show()  # display to screen
+    #    result.save(filename="result.jpg")  # save to disk
+        
+    # Directory paths
+    test_images_dir = "training-set-2/test/images"
     
-    results = model(['training-set-2/test/images/546_HC_png.rf.e3957fda110520171af9e832bd820fb7.jpg'])
-    #results = model([file for file in os.listdir('training-set-2')])
+    #create a new results file if it exists
+    result_images_dir = "result-images-0"
+    counter = 1
+    while(os.path.exists(result_images_dir)):
+        result_images_dir = result_images_dir[:len(result_images_dir) - 1] + str(counter)
+        counter += 1
+    
+    
+    os.makedirs(result_images_dir)
+        
+    image_filenames = [filename for filename in os.listdir(test_images_dir) if filename.endswith(('.png', '.jpg', '.jpeg'))]
+    results = model([os.path.join(test_images_dir, filename) for filename in image_filenames])
+    
     # Process results list
-    for result in results:
-        boxes = result.boxes  # Boxes object for bounding box outputs
-        masks = result.masks  # Masks object for segmentation masks outputs
-        keypoints = result.keypoints  # Keypoints object for pose outputs
-        probs = result.probs  # Probs object for classification outputs
-        obb = result.obb  # Oriented boxes object for OBB outputs
-        result.show()  # display to screen
-        result.save(filename="result.jpg")  # save to disk
-    
+    for i, result in enumerate(results):
+        #boxes = result.boxes  # Boxes object for bounding box outputs
+        #masks = result.masks  # Masks object for segmentation masks outputs
+        #keypoints = result.keypoints  # Keypoints object for pose outputs
+        #probs = result.probs  # Probs object for classification outputs
+        #obb = result.obb  # Oriented boxes object for OBB outputs
+
+        # Save result image to new folder
+        result_filename = os.path.join(result_images_dir, f"result_{image_filenames[i]}")
+        result.save(filename=result_filename)  # save to disk
+
+        # Compare and combine test image with result image side by side
+        test_image_path = os.path.join(test_images_dir, image_filenames[i])
+        combined_image = combine_images_side_by_side(test_image_path, result_filename)
+
+        # Save the combined image
+        combined_image.save(os.path.join(result_images_dir, f"combined_{image_filenames[i]}"))
+
+def combine_images_side_by_side(test_image_path, result_image_path):
+    # Open the test and result images
+    test_image = Image.open(test_image_path)
+    result_image = Image.open(result_image_path)
+
+    # Ensure both images have the same height by resizing the result image
+    if test_image.size[1] != result_image.size[1]:
+        result_image = result_image.resize((int(result_image.size[0] * test_image.size[1] / result_image.size[1]), test_image.size[1]))
+
+    # Create a new image with combined width and same height as the test image
+    combined_width = test_image.width + result_image.width
+    combined_image = Image.new('RGB', (combined_width, test_image.height))
+
+    # Paste the test image on the left and the result image on the right
+    combined_image.paste(test_image, (0, 0))
+    combined_image.paste(result_image, (test_image.width, 0))
+
+    return combined_image
 if __name__ == '__main__':
     #run()
     test()
