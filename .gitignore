@@ -9,3 +9,6 @@ Include/
 .venv/
 pyvenv.cfg
 yolo11n.pt
+training-set-1/
+training-set-2/
+
