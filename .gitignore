@@ -12,4 +12,6 @@ yolo11n.pt
 training-set-1/
 training-set-2/
 result-images-0/
-
+segmented-1/
+bboxes-2/
+weights/
